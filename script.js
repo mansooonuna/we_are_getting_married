@@ -464,23 +464,26 @@
   let touchStartY = 0;
   let touchEndY = 0;
 
-  let savedScrollY = 0;
-
   function openPhotoModal(images, index) {
     modalImages = images;
     modalIndex = index;
     showModalImage();
+    const scrollY = window.scrollY || window.pageYOffset;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflowY = 'hidden';
     $('#photoModal').classList.add('is-open');
-    savedScrollY = window.scrollY;
-    document.body.style.top = `-${savedScrollY}px`;
-    document.body.classList.add('no-scroll');
   }
 
   function closePhotoModal() {
-    $('#photoModal').classList.remove('is-open');
-    document.body.classList.remove('no-scroll');
+    const scrollY = parseInt(document.body.style.top || '0') * -1;
+    document.body.style.position = '';
     document.body.style.top = '';
-    window.scrollTo(0, savedScrollY);
+    document.body.style.width = '';
+    document.body.style.overflowY = '';
+    window.scrollTo(0, scrollY);
+    $('#photoModal').classList.remove('is-open');
   }
 
   function showModalImage() {
