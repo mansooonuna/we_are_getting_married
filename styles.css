@@ -482,6 +482,8 @@ a {
   height: 100%;
   object-fit: cover;
   object-position: center 25%;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .hero__frame-border {
