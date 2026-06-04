@@ -482,7 +482,7 @@
     document.body.style.top = '';
     document.body.style.width = '';
     document.body.style.overflowY = '';
-    window.scrollTo(0, scrollY);
+    window.scrollTo({ top: scrollY, behavior: 'instant' });
     $('#photoModal').classList.remove('is-open');
   }
 
