@@ -110,6 +110,10 @@ img {
   user-drag: none;
 }
 
+a, button {
+  outline: none;
+}
+
 body.no-scroll {
   overflow: hidden;
   position: fixed;
