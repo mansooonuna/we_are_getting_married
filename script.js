@@ -490,7 +490,8 @@
       });
       const activeThumb = thumbs.children[currentIndex];
       if (activeThumb) {
-        activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        const targetLeft = activeThumb.offsetLeft - (thumbs.clientWidth - activeThumb.clientWidth) / 2;
+        thumbs.scrollTo({ left: targetLeft, behavior: 'smooth' });
       }
     }
 
