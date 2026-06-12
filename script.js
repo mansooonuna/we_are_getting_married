@@ -528,29 +528,6 @@
 
     viewer.addEventListener('click', () => openPhotoModal(galleryImages, currentIndex));
 
-    // Swipe support
-    let galleryTouchStartX = 0;
-    let galleryTouchStartY = 0;
-
-    viewer.addEventListener('touchstart', (e) => {
-      galleryTouchStartX = e.changedTouches[0].screenX;
-      galleryTouchStartY = e.changedTouches[0].screenY;
-    }, { passive: true });
-
-    viewer.addEventListener('touchend', (e) => {
-      const diffX = galleryTouchStartX - e.changedTouches[0].screenX;
-      const diffY = galleryTouchStartY - e.changedTouches[0].screenY;
-      const minSwipe = 40;
-
-      if (Math.abs(diffX) < minSwipe || Math.abs(diffX) < Math.abs(diffY)) return;
-
-      if (diffX > 0) {
-        goNext();
-      } else {
-        goPrev();
-      }
-    }, { passive: true });
-
     render();
   }
 
