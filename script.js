@@ -37,18 +37,21 @@
      ═══════════════════════════════════════════ */
 
   function loadImagesFromFolder(folder, maxAttempts = 50) {
+    const exts = ['webp', 'jpg', 'jpeg', 'png'];
     return new Promise(resolve => {
         const images = [];
         let current = 1;
         let consecutiveFails = 0;
 
-        function tryNext() {
-            if (current > maxAttempts || consecutiveFails >= 3) {
-                resolve(images);
+        function tryExt(extIndex) {
+            if (extIndex >= exts.length) {
+                consecutiveFails++;
+                current++;
+                tryNext();
                 return;
             }
+            const path = `images/${folder}/${current}.${exts[extIndex]}`;
             const img = new Image();
-            const path = `images/${folder}/${current}.jpg`;
             img.onload = function() {
                 images.push(path);
                 consecutiveFails = 0;
@@ -56,11 +59,17 @@
                 tryNext();
             };
             img.onerror = function() {
-                consecutiveFails++;
-                current++;
-                tryNext();
+                tryExt(extIndex + 1);
             };
             img.src = path;
+        }
+
+        function tryNext() {
+            if (current > maxAttempts || consecutiveFails >= 3) {
+                resolve(images);
+                return;
+            }
+            tryExt(0);
         }
 
         tryNext();
@@ -237,7 +246,7 @@
      ═══════════════════════════════════════════ */
 
   function initHero() {
-    $('#heroPhoto').src = 'images/hero/1.jpg';
+    $('#heroPhoto').src = 'images/hero/1.webp';
     $('#heroNameGroom').textContent = CONFIG.groom.name;
     $('#heroNameBride').textContent = CONFIG.bride.name;
   }
@@ -302,13 +311,11 @@
     const parentsHTML = `
       <div class="parent-row">
         ${parentLine(g.father, g.mother, g.fatherDeceased, g.motherDeceased)}
-        <span class="parent-dot">●</span>
-        의 아들 <span class="child-name">${g.name}</span>
+        의 차남 <span class="child-name">${g.name}</span>
       </div>
       <div class="parent-row">
         ${parentLine(b.father, b.mother, b.fatherDeceased, b.motherDeceased)}
-        <span class="parent-dot">●</span>
-        의 딸 <span class="child-name">${b.name}</span>
+        의 장녀 <span class="child-name">${b.name}</span>
       </div>
     `;
 
@@ -329,8 +336,8 @@
 
     // Header
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'];
-    grid.innerHTML = `<div class="calendar__header">${monthNames[month]} ${year}</div>`;
+      'July', 'August', '09', 'October', 'November', 'December'];
+    grid.innerHTML = `<div class="calendar__header">${year}. ${monthNames[month]} </div>`;
 
     // Weekdays
     const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
@@ -357,11 +364,31 @@
       daysContainer.appendChild(empty);
     }
 
+    // Wedding time
+    const hours = dt.getHours();
+    const minutes = dt.getMinutes();
+    const period = hours < 12 ? '오전' : '오후';
+    const h12 = hours % 12 || 12;
+    const timeStr = minutes > 0 ? `${period} ${h12}:${String(minutes).padStart(2, '0')}` : `${period} ${h12}시`;
+
     for (let d = 1; d <= lastDate; d++) {
       const dayEl = document.createElement('span');
       dayEl.className = 'calendar__day';
-      if (d === weddingDay) dayEl.classList.add('is-today');
-      dayEl.textContent = d;
+
+      if (d === weddingDay) {
+        const badge = document.createElement('span');
+        badge.className = 'calendar__day-badge';
+        badge.textContent = d;
+        dayEl.appendChild(badge);
+
+        const timeEl = document.createElement('span');
+        timeEl.className = 'calendar__time';
+        timeEl.textContent = timeStr;
+        dayEl.appendChild(timeEl);
+      } else {
+        dayEl.textContent = d;
+      }
+
       daysContainer.appendChild(dayEl);
     }
 
@@ -405,24 +432,29 @@
      Story Section
      ═══════════════════════════════════════════ */
 
-  function initStory(storyImages) {
-    $('#storyTitle').textContent = CONFIG.story.title;
-    $('#storyContent').textContent = CONFIG.story.content;
+  function initStory() {
+//    $('#storyTitle').textContent = CONFIG.story.title;
 
-    const container = $('#storyPhotos');
-    // Remove loading placeholder if present
-    const placeholder = container.querySelector('.loading-placeholder');
-    if (placeholder) placeholder.remove();
+    const chatBody = $('#chatBody');
+    const chatHeaderName = $('#chatHeaderName');
+    if (!chatBody) return;
 
-    if (storyImages.length === 0) return;
+    if (chatHeaderName) {
+      chatHeaderName.textContent = `${CONFIG.groom.name} ♥ ${CONFIG.bride.name}`;
+    }
 
-    storyImages.forEach((src, i) => {
-      const div = document.createElement('div');
-      div.className = 'story__photo-item animate-item';
-      div.setAttribute('data-animate', 'fade-up');
-      div.innerHTML = `<img src="${src}" alt="스토리 사진 ${i + 1}" loading="lazy">`;
-      div.addEventListener('click', () => openPhotoModal(storyImages, i));
-      container.appendChild(div);
+    CONFIG.story.chat.forEach(({ q, a }) => {
+      const qEl = document.createElement('div');
+      qEl.className = 'chat-bubble chat-bubble--q animate-item';
+      qEl.setAttribute('data-animate', 'fade-up');
+      qEl.textContent = q;
+      chatBody.appendChild(qEl);
+
+      const aEl = document.createElement('div');
+      aEl.className = 'chat-bubble chat-bubble--a animate-item';
+      aEl.setAttribute('data-animate', 'fade-up');
+      aEl.textContent = a;
+      chatBody.appendChild(aEl);
     });
   }
 
@@ -431,9 +463,14 @@
      ═══════════════════════════════════════════ */
 
   function initGallery(galleryImages) {
-    const grid = $('#galleryGrid');
+    const viewer = $('#galleryViewer');
+    const mainImg = $('#galleryMainImg');
+    const thumbs = $('#galleryThumbs');
+    const prevBtn = $('#galleryPrev');
+    const nextBtn = $('#galleryNext');
+
     // Remove loading placeholder if present
-    const placeholder = grid.querySelector('.loading-placeholder');
+    const placeholder = thumbs.querySelector('.loading-placeholder');
     if (placeholder) placeholder.remove();
 
     if (galleryImages.length === 0) {
@@ -443,14 +480,46 @@
       return;
     }
 
+    let currentIndex = 0;
+
+    function render() {
+      mainImg.src = galleryImages[currentIndex];
+      mainImg.alt = `갤러리 사진 ${currentIndex + 1}`;
+      $$('.gallery__thumb', thumbs).forEach((thumb, i) => {
+        thumb.classList.toggle('is-active', i === currentIndex);
+      });
+      const activeThumb = thumbs.children[currentIndex];
+      if (activeThumb) {
+        activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    }
+
     galleryImages.forEach((src, i) => {
       const div = document.createElement('div');
-      div.className = 'gallery__item animate-item';
-      div.setAttribute('data-animate', 'scale-in');
-      div.innerHTML = `<img src="${src}" alt="갤러리 사진 ${i + 1}" loading="lazy">`;
-      div.addEventListener('click', () => openPhotoModal(galleryImages, i));
-      grid.appendChild(div);
+      div.className = 'gallery__thumb';
+      div.innerHTML = `<img src="${src}" alt="썸네일 ${i + 1}" loading="lazy">`;
+      div.addEventListener('click', () => {
+        currentIndex = i;
+        render();
+      });
+      thumbs.appendChild(div);
     });
+
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+      render();
+    });
+
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentIndex = (currentIndex + 1) % galleryImages.length;
+      render();
+    });
+
+    viewer.addEventListener('click', () => openPhotoModal(galleryImages, currentIndex));
+
+    render();
   }
 
   /* ═══════════════════════════════════════════
@@ -565,6 +634,7 @@
     $('#locationMapImg').src = 'images/location/1.jpg';
     $('#kakaoMapBtn').href = w.mapLinks.kakao || '#';
     $('#naverMapBtn').href = w.mapLinks.naver || '#';
+    $('#tmapBtn').href = w.mapLinks.tmap || `tmap://search?name=${encodeURIComponent(w.address || '')}`;
 
     $('#copyAddressBtn').addEventListener('click', () => {
       copyToClipboard(w.address, '주소가 복사되었습니다');
@@ -690,13 +760,9 @@
      ═══════════════════════════════════════════ */
 
   function showLoadingPlaceholders() {
-    const storyPhotos = $('#storyPhotos');
-    const galleryGrid = $('#galleryGrid');
-
+    const galleryThumbs = $('#galleryThumbs');
     const placeholderHTML = '<div class="loading-placeholder"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>';
-
-    if (storyPhotos) storyPhotos.innerHTML = placeholderHTML;
-    if (galleryGrid) galleryGrid.innerHTML = placeholderHTML;
+    if (galleryThumbs) galleryThumbs.innerHTML = placeholderHTML;
   }
 
   /* ═══════════════════════════════════════════
@@ -763,18 +829,10 @@
     initSound();
     initScrollAnimations();
 
-    // Set story text immediately (photos load async)
-    $('#storyTitle').textContent = CONFIG.story.title;
-    $('#storyContent').textContent = CONFIG.story.content;
+    // Init story chat and gallery images
+    initStory();
 
-    // Auto-detect story and gallery images in parallel
-    const [storyImages, galleryImages] = await Promise.all([
-      loadImagesFromFolder('story'),
-      loadImagesFromFolder('gallery')
-    ]);
-
-    // Render sections with discovered images
-    initStory(storyImages);
+    const galleryImages = await loadImagesFromFolder('gallery');
     initGallery(galleryImages);
   }
 

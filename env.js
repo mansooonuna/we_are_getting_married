@@ -21,7 +21,8 @@ const ENV = {
     tel: "031-487-8100",
     mapLinks: {
       naver: "https://naver.me/x7ndUhZi",
-      kakao: "https://place.map.kakao.com/25447779"
+      kakao: "https://place.map.kakao.com/25447779",
+      tmap: "https://tmap.life/a3cb6da9"
     }
   },
 
@@ -33,7 +34,7 @@ const ENV = {
     ],
     bride: [
       { role: "신부", name: "박다솜", bank: "국민은행", number: "010-9039-1327" },
-      { role: "아버지", name: "박종수", bank: "기업은행", number: "000-000-000000" },
+      { role: "아버지", name: "박종수", bank: "신협", number: "010-6356-6666" },
       { role: "어머니", name: "정해란", bank: "국민은행", number: "626402-01-500808" }
     ]
   }

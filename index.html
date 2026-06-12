@@ -69,6 +69,8 @@
       <div class="hero__overlay"></div>
       <img class="hero__photo" id="heroPhoto" src="" alt="웨딩 사진" loading="eager">
       <img class="hero__frame-border" src="images/frame-border.jpg" alt="" aria-hidden="true">
+      <img class="hero__frame-overlay hero__frame-overlay--right" src="images/hero-overlay.png" alt="" aria-hidden="true">
+      <img class="hero__frame-overlay hero__frame-overlay--left" src="images/hero-overlay.png" alt="" aria-hidden="true">
 
       <div class="hero__mag-cover">
         <!-- 좌측 상단: 제1호 + 발행일 -->
@@ -130,17 +132,11 @@
       <div class="section__inner">
         <div class="ornament animate-item" data-animate="fade-in">❀</div>
         <h2 class="section__title animate-item" data-animate="fade-up" id="greetingTitle"></h2>
+        <div class="greeting__heart-frame animate-item" data-animate="fade-up">
+          <img src="images/heart_profile.webp" alt="photo">
+        </div>
         <p class="greeting__text animate-item" data-animate="fade-up" id="greetingContent"></p>
         <div class="greeting__parents animate-item" data-animate="fade-up" id="greetingParents"></div>
-      </div>
-    </section>
-
-    <!-- ─── Our Story Section ─── -->
-    <section class="section story" id="story">
-      <div class="section__inner">
-        <h2 class="section__title animate-item" data-animate="fade-up" id="storyTitle"></h2>
-        <p class="story__text animate-item" data-animate="fade-up" id="storyContent"></p>
-        <div class="story__photos" id="storyPhotos"></div>
       </div>
     </section>
 
@@ -162,6 +158,22 @@
       </div>
     </section>
 
+    <!-- ─── Our Story Section ─── -->
+    <section class="section story" id="story">
+      <div class="section__inner">
+        <h2 class="section__title animate-item" data-animate="fade-up" id="storyTitle"></h2>
+        <div class="chat-window animate-item" data-animate="fade-up" id="chatWindow">
+          <div class="chat-header">
+            <div class="chat-header__avatar">💍</div>
+            <div class="chat-header__name" id="chatHeaderName"></div>
+          </div>
+          <div class="chat-body" id="chatBody"></div>
+        </div>
+      </div>
+    </section>
+
+
+
     <!-- ─── Location Section ─── -->
     <section class="section location" id="location">
       <div class="section__inner">
@@ -182,6 +194,17 @@
         <div class="location__links animate-item" data-animate="fade-up">
           <a class="btn btn--kakao" id="kakaoMapBtn" href="#" target="_blank" rel="noopener">카카오맵</a>
           <a class="btn btn--naver" id="naverMapBtn" href="#" target="_blank" rel="noopener">네이버지도</a>
+          <a class="btn btn--tmap" id="tmapBtn" href="#" target="_blank" rel="noopener">티맵</a>
+        </div>
+        <div class="location__parking animate-item" data-animate="fade-up">
+          <h3 class="location__parking-title">주 차 안 내</h3>
+          <p class="location__parking-desc">건물 주차장 이용이 불가하여 본관 맞은편 주차타워 이용 바랍니다.</p>
+          <ul class="location__parking-list">
+            <li>1주차장 : 화랑주차타워 2시간 무료 (광덕서로 106)</li>
+            <li>2주차장 : 월드타워주차장 2시간 무료 (광덕3로 135-18)</li>
+            <li>3주차장 : 고잔역 공영주차장 (유료/일요일 무료)</li>
+          </ul>
+          <p class="location__parking-note">주차 혼잡이 예상되오니 가급적 대중교통을 이용을 부탁드립니다.</p>
         </div>
       </div>
     </section>
@@ -189,8 +212,17 @@
     <!-- ─── Gallery Section ─── -->
     <section class="section gallery" id="gallery">
       <div class="section__inner">
-        <h2 class="section__title animate-item" data-animate="fade-up">갤러리</h2>
-        <div class="gallery__grid" id="galleryGrid"></div>
+        <h2 class="section__title animate-item" data-animate="fade-up">Gallery</h2>
+        <div class="gallery__viewer animate-item" data-animate="fade-up" id="galleryViewer">
+          <img class="gallery__main-img" id="galleryMainImg" src="" alt="갤러리 사진" loading="lazy">
+          <button class="gallery__nav gallery__nav--prev" id="galleryPrev" aria-label="이전 사진">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="gallery__nav gallery__nav--next" id="galleryNext" aria-label="다음 사진">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="gallery__thumbs" id="galleryThumbs"></div>
       </div>
     </section>
 
