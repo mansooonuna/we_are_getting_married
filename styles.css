@@ -1242,7 +1242,7 @@ a {
 
 .location__parking {
   margin-top: var(--spacing-lg);
-  padding: 1.1rem 0.85rem;
+  padding: 0.7rem;
   background-color: var(--color-bg-warm);
   border-radius: var(--radius-md);
   text-align: left;
