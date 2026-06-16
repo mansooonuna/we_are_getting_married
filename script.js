@@ -246,6 +246,11 @@
      ═══════════════════════════════════════════ */
 
   function initHero() {
+    const hero = document.querySelector('.hero');
+    if (hero) {
+      hero.style.height = window.innerHeight + 'px';
+      hero.style.minHeight = 'initial';
+    }
     $('#heroPhoto').src = 'images/hero/1.webp';
     $('#heroNameGroom').textContent = CONFIG.groom.name;
     $('#heroNameBride').textContent = CONFIG.bride.name;
